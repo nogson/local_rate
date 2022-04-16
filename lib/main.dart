@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:local_rate/provider.dart';
 
 void main() {
   runApp(
@@ -16,38 +17,27 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+class MyHomePage extends ConsumerStatefulWidget {
+  MyHomePage({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  MyHomePageState createState() => MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
+class MyHomePageState extends ConsumerState<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(ref.watch(titleProvider)),
       ),
       body: Center(
         child: Column(
@@ -57,16 +47,43 @@ class _MyHomePageState extends State<MyHomePage> {
               'You have pushed the button this many times:',
             ),
             Text(
-              '$_counter',
+              ref.watch(countProvider).toString(),
               style: Theme.of(context).textTheme.headline4,
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                FloatingActionButton(
+                  onPressed: () => ref
+                      .watch(countProvider.state)
+                      .update((state) => state += 1),
+                  tooltip: 'Increment',
+                  child: const Icon(Icons.add),
+                ),
+                FloatingActionButton(
+                  onPressed: () => ref
+                      .watch(countProvider.state)
+                      .update((state) => state += 1),
+                  tooltip: 'Increment',
+                  child: const Icon(Icons.exposure_minus_1),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text('1'),
+                Text('2'),
+              ],
+            )
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () =>
+            ref.watch(countProvider.state).update((state) => state += 1),
         tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.read_more),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
